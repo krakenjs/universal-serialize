@@ -1,38 +1,80 @@
-Grumbler
---------
+Universal Serialize
+-------------------
 
-https://medium.com/@bluepnume/introducing-grumbler-an-opinionated-javascript-module-template-612245e06d00
+Universal serializer and deserializer, which supports many build-in javascript types, and any number of custom types you want to support
 
-A template for writing distributable javascript libraries.
+## Simple serialization
 
-Javascript libraries are fun to write. Setting up all of the boilerplate to get your build up and running is not so fun.
+```javascript
+import { serialize, deserialize } from 'universal-serialize';
 
-This module provides a forkable module template, which you can use to kick-start a new javascript library. Once you've done that, feel free to come back and switch out the tooling for whatever you prefer.
 
-Features
---------
+// Define a complex object
+const originalObject = {
+  foo: 'bar',
+  date: new Date(),
+  error: new Error('world')
+};
 
-- Build minified and unminified versions of your code, with source maps
-- Use ES2015 out of the box
-- Write headless Karma / Mocha tests, which run in Chrome Headless and other browsers, with code coverage reports
-- Integrate with Travis CI out of the box
-- Write error free, type-safe code with ESLint, Flow-Type, and Flow-Runtime
+// Serialize the complex object
+const jsonString = serialize();
 
-Technologies
-------------
+// Deserialize the object
+const deserializedObject = deserialize(jsonString);
 
-- babel
-- eslint
-- flowtype
-- flow-runtime
-- karma
-- phantomjs
-- chrome headless
-- mocha
-- istanbul
-- webpack
-- npm
-- travis
+// Make use of the deserialized data and objects
+console.log(
+  deserializedObject.foo,
+  deserializedObject.date.toUTCString(),
+  deserializedObject.error.stack
+);
+```
+
+By default universal serialize will serialize:
+
+- Errors
+- Regexes
+- Dates
+- Arrays
+- Objects
+- Strings
+- Numbers
+- Booleans
+- Nulls
+
+## Custom serialization
+
+```javascript
+import { serialize, deserialize, serializeType, TYPE } from 'universal-serialize';
+
+// Define a new serialization type
+const SERIALIZED_FUNCTION = 'SERIALIZED_FUNCTION';
+
+// Define a complex object containing a function
+const originalObject = {
+    sayHello: () => {
+        console.log('Hello world!');
+    };
+};
+
+// Serialize the object with a special handler to serialize function types
+const jsonString = serialize(originalObject, {
+    [ TYPE.FUNCTION ]: (val) => {
+        // Serialize the function as a 'serialized function'
+        return serializeType(SERIALIZED_FUNCTION, val.toString());
+    }
+});
+
+// Deserialize any `SERIALIZED_FUNCTION` types from the serialized object
+const deserializedObject = deserialize(jsonString, {
+    [ SERIALIZED_FUNCTION ]: (fnString) => {
+      return eval(fnString);
+    }
+});
+
+// Call the deserialized functionn
+deserializedObject.sayHello();
+```
 
 Quick Start
 -----------
@@ -40,7 +82,7 @@ Quick Start
 #### Getting Started
 
 - Fork the module
-- Run setup: `npm run setup`
+- Run setup: `npm install`
 - Start editing code in `./src` and writing tests in `./tests`
 - `npm run build`
 
@@ -87,32 +129,3 @@ npm run karma -- --browser=Chrome --keep-open
 
 - Publish your code: `npm run release` to add a patch
   - Or `npm run release:path`, `npm run release:minor`, `npm run release:major`
-
-FAQ
----
-
-- **Who is this for?**
-  - Anyone who wants to get started quickly on a javascript library without setting up a lot of boilerplate
-  - Anyone who wants a fairly healthy opinionated set of defaults to get started with
-  - Anyone new to writing front-end modules, who doesn't want to immediately research which modules to use to build their code
-
-- **Who this is *not* for?**
-  - Anyone who needs/wants tight control over their project, and which specific build tools they want to use
-
-- **Why use technology X/Y/Z?**
-
-  Probably because it's been a good fit for us in the past. We wanted our focus to be around (fairly) standardized
-  javascript as much as possible, rather than compiled-to-javascript languages, hence the use of babel, flow, etc.
-
-- **So you just took a bunch of build-tools and daisy-chained them together?**
-
-  Yep, pretty much. This is not anything remotely technically impressive, or new, or innovative. It's just a healthy
-  set of defaults to get started with if you're building a front-end distributable library.
-
-- **Can I improve this template?**
-
-  By all means, please feel to raise a PR, but if it's a big change, try to open an issue first so we can chat!
-
-- **What about support for React, Ember, framework X or Y?**
-
-  Wanted to keep this module as framework-agnostic as possible. Not to mention there are already pretty good boilerplates out there for whatever framework you're using, I'll bet. Otherwise please feel free to be my guest and fork `grumbler-superawesomeframework` if it's helpful.
