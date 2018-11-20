@@ -89,6 +89,9 @@ describe('basic type cases', () => {
         // $FlowFixMe
         val.foo.code = 'ERROR_55';
         const result = deserialize(serialize(val));
+        if (!(result.foo instanceof Error)) {
+            throw new TypeError(`Expected result.foo to be an instance of error`);
+        }
         if (result.foo.message !== val.foo.message) {
             throw new Error(`Expected message ${ result.foo.message } to equal ${ val.foo.message }`);
         }

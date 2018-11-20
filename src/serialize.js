@@ -5,10 +5,10 @@ import type { Thenable, CustomSerializedType, NativeSerializedType } from './typ
 import { determineType, isSerializedType } from './common';
 import {
     serializeFunction,
-    serializeError,
+    serializeError, type SerializedError,
     serializePromise,
-    serializeRegex,
-    serializeDate,
+    serializeRegex, type SerializedRegex,
+    serializeDate, type SerializedDate,
     serializeArray,
     serializeObject,
     serializeString,
@@ -17,20 +17,24 @@ import {
     serializeNull
 } from './serializers';
 
-type Serializer<I : mixed> = (I, string) => NativeSerializedType | CustomSerializedType | mixed | void;
+type NativeSerializer<V : mixed, S : mixed, T : $Values<typeof TYPE>> = (value : V, key : string) => NativeSerializedType<T, S>;
+type CustomSerializer<V : mixed, S : mixed, T : string> = (value : V, key : string) => CustomSerializedType<T, S>;
+type PrimitiveSerializer<V : mixed, S : mixed> = (value : V, key : string) => S;
+type CustomOrPrimitiveSerializer<V : mixed, T : string> = CustomSerializer<V, *, T> | PrimitiveSerializer<V, *>;
+type NativeOrCustomOrPrimitiveSerializer<V : mixed, S : mixed, T : string> = NativeSerializer<V, S, T> | CustomOrPrimitiveSerializer<V, T>;
 
 type Serializers = {|
-    function? : Serializer<Function>,
-    error? : Serializer<Error>,
-    promise? : Serializer<Thenable>,
-    regex? : Serializer<RegExp>,
-    date? : Serializer<Date>,
-    array? : Serializer<$ReadOnlyArray<mixed>>,
-    object? : Serializer<Object>,
-    string? : Serializer<string>,
-    number? : Serializer<number>,
-    boolean? : Serializer<boolean>,
-    null? : Serializer<null>
+    function? : CustomOrPrimitiveSerializer<Function, typeof TYPE.FUNCTION>,
+    error? : NativeOrCustomOrPrimitiveSerializer<Error, SerializedError, typeof TYPE.ERROR>,
+    promise? : CustomOrPrimitiveSerializer<Thenable, typeof TYPE.PROMISE>,
+    regex? : NativeOrCustomOrPrimitiveSerializer<RegExp, SerializedRegex, typeof TYPE.REGEX>,
+    date? : NativeOrCustomOrPrimitiveSerializer<Date, SerializedDate, typeof TYPE.DATE>,
+    array? : CustomOrPrimitiveSerializer<$ReadOnlyArray<mixed>, typeof TYPE.ARRAY>,
+    object? : CustomOrPrimitiveSerializer<Object, typeof TYPE.OBJECT>,
+    string? : CustomOrPrimitiveSerializer<string, typeof TYPE.STRING>,
+    number? : CustomOrPrimitiveSerializer<number, typeof TYPE.NUMBER>,
+    boolean? : CustomOrPrimitiveSerializer<boolean, typeof TYPE.BOOLEAN>,
+    null? : CustomOrPrimitiveSerializer<null, typeof TYPE.NULL>
 |};
 
 const SERIALIZER : Serializers = {
@@ -82,11 +86,4 @@ export function serialize<T : mixed>(obj : T, serializers : Serializers = defaul
     }
 
     return result;
-}
-
-export function serializeType<T : string, V : mixed>(type : T, val : V) : CustomSerializedType {
-    return {
-        __type__: type,
-        __val__:  val
-    };
 }

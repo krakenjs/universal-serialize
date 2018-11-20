@@ -1,14 +1,14 @@
 /* @flow */
 
-import type { Thenable, NativeSerializedType, CustomSerializedType } from './types';
+import type { Thenable } from './types';
 import { TYPE } from './constants';
 import { determineType, isSerializedType } from './common';
 import {
     deserializeFunction,
-    deserializeError,
+    deserializeError, type SerializedError,
     deserializePromise,
-    deserializeRegex,
-    deserializeDate,
+    deserializeRegex, type SerializedRegex,
+    deserializeDate, type SerializedDate,
     deserializeArray,
     deserializeObject,
     deserializeString,
@@ -17,21 +17,22 @@ import {
     deserializeNull
 } from './serializers';
 
-type Deserializer<O : mixed> = (NativeSerializedType | CustomSerializedType | mixed, string) => O;
+type Deserializer<V : mixed, S : mixed> = (serializedValue : S, key : string) => V;
+type PrimitiveDeserializer<V, S = V> = (serializedValue : S, key : string) => V;
 
 type Deserializers = {
-    function? : Deserializer<Function>,
-    error? : Deserializer<Error>,
-    promise? : Deserializer<Thenable>,
-    regex? : Deserializer<RegExp>,
-    date? : Deserializer<Date>,
-    array? : Deserializer<$ReadOnlyArray<mixed>>,
-    object? : Deserializer<Object>,
-    string? : Deserializer<string>,
-    number? : Deserializer<number>,
-    boolean? : Deserializer<boolean>,
-    null? : Deserializer<null>,
-    [string] : Deserializer<mixed>
+    function? : Deserializer<Function, *>,
+    error? : Deserializer<Error, SerializedError>,
+    promise? : Deserializer<Thenable, *>,
+    regex? : Deserializer<RegExp, SerializedRegex>,
+    date? : Deserializer<Date, SerializedDate>,
+    array? : PrimitiveDeserializer<$ReadOnlyArray<mixed>>,
+    object? : PrimitiveDeserializer<Object>,
+    string? : PrimitiveDeserializer<string>,
+    number? : PrimitiveDeserializer<number>,
+    boolean? : PrimitiveDeserializer<boolean>,
+    null? : PrimitiveDeserializer<null>,
+    [string] : Deserializer<mixed, *>
 };
 
 // $FlowFixMe
@@ -63,24 +64,29 @@ export function deserialize<T : mixed | null | void>(str : string, deserializers
             return val;
         }
 
-        const type = isSerializedType(val)
-            ? val.__type__
-            : determineType(val);
+        let type;
+        let value;
+
+        if (isSerializedType(val)) {
+            type = val.__type__;
+            value = val.__val__;
+        } else {
+            type = determineType(val);
+            value = val;
+        }
 
         if (!type) {
-            return val;
+            return value;
         }
 
         // $FlowFixMe
-        if (deserializers[type]) {
-            // $FlowFixMe
-            return deserializers[type](val.__val__, key);
-        } else if (DESERIALIZER[type]) {
-            // $FlowFixMe
-            return DESERIALIZER[type](val, key);
-        } else {
-            return val;
+        const deserializer = deserializers[type] || DESERIALIZER[type];
+
+        if (!deserializer) {
+            return value;
         }
+
+        return deserializer(value, key);
     }
 
     return JSON.parse(str, replacer);

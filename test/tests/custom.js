@@ -1,6 +1,6 @@
 /* @flow */
 
-import { TYPE, serialize, deserialize, serializeType, serializeObject } from '../../src';
+import { TYPE, serialize, deserialize, serializeType, serializeObject, type CustomSerializedType } from '../../src';
 
 describe('custom type cases', () => {
 
@@ -14,7 +14,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.DATE ]: (value, key) => {
+            [ TYPE.DATE ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value.toJSON() !== val.foo.toJSON()) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -54,7 +54,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.BOOLEAN ]: (value, key) => {
+            [ TYPE.BOOLEAN ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -94,7 +94,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.STRING ]: (value, key) => {
+            [ TYPE.STRING ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -134,7 +134,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.NUMBER ]: (value, key) => {
+            [ TYPE.NUMBER ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -174,7 +174,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.NUMBER ]: (value, key) => {
+            [ TYPE.NUMBER ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -214,7 +214,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.ARRAY ]: (value, key) => {
+            [ TYPE.ARRAY ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -254,7 +254,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.OBJECT ]: (value, key) => {
+            [ TYPE.OBJECT ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     return serializeObject(value);
                 }
@@ -294,7 +294,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.REGEX ]: (value, key) => {
+            [ TYPE.REGEX ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -334,7 +334,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.NULL ]: (value, key) => {
+            [ TYPE.NULL ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -374,7 +374,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.ERROR ]: (value, key) => {
+            [ TYPE.ERROR ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -415,7 +415,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.PROMISE ]: (value, key) => {
+            [ TYPE.PROMISE ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }
@@ -459,7 +459,7 @@ describe('custom type cases', () => {
         const deserializedValue = `deserialized::${ Math.random().toString() }`;
     
         const serializers = {
-            [ TYPE.FUNCTION ]: (value, key) => {
+            [ TYPE.FUNCTION ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
                 if (value !== val.foo) {
                     throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.foo) }`);
                 }

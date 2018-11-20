@@ -1,6 +1,7 @@
 /* @flow */
 
 import { TYPE } from './constants';
+import type { CustomSerializedType } from './types';
 
 export function isSerializedType(item : mixed) : boolean {
     return (typeof item === 'object' && item !== null && typeof item.__type__ === 'string');
@@ -55,4 +56,11 @@ export function determineType(val : mixed) : $Values<typeof TYPE> | void {
     if (typeof val === 'boolean') {
         return TYPE.BOOLEAN;
     }
+}
+
+export function serializeType<T : string, V : mixed>(type : T, val : V) : CustomSerializedType<T, V> {
+    return {
+        __type__: type,
+        __val__:  val
+    };
 }

@@ -4,20 +4,17 @@ import { TYPE } from './constants';
 
 // eslint-disable-next-line flowtype/require-exact-type
 export type Thenable = {
-    then : () => Thenable,
-    catch : () => Thenable
+    then : (onSuccess? : (val? : mixed) => mixed, onError? : (err? : mixed) => mixed) => Thenable,
+    catch : (onError? : (err? : mixed) => mixed) => Thenable
 };
 
 // eslint-disable-next-line flowtype/require-exact-type
-export type SerializedType = {
-    __type__ : string
+export type NativeSerializedType<T : $Values<typeof TYPE>, V : mixed> = {
+    __type__ : T,
+    __val__ : V
 };
 
-export type NativeSerializedType = SerializedType & {
-    __type__ : $Values<typeof TYPE>
-};
-
-export type CustomSerializedType = SerializedType & {|
-    __type__ : string,
-    __val__ : mixed
+export type CustomSerializedType<T : string, V : mixed> = {|
+    __type__ : T,
+    __val__ : V
 |};
