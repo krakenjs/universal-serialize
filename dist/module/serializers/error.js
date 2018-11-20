@@ -1,20 +1,23 @@
+import { serializeType } from '../common';
 import { TYPE } from '../constants';
-export function serializeError(val) {
-  return {
-    __type__: TYPE.ERROR,
-    __message__: val.message,
-    __stack__: val.stack,
-    // $FlowFixMe
-    __code__: val.code
-  };
+// $FlowFixMe
+export function serializeError(_ref) {
+  var message = _ref.message,
+      stack = _ref.stack,
+      code = _ref.code;
+  return serializeType(TYPE.ERROR, {
+    message: message,
+    stack: stack,
+    code: code
+  });
 }
-export function deserializeError(_ref) {
-  var __message__ = _ref.__message__,
-      __code__ = _ref.__code__,
-      __stack__ = _ref.__stack__;
-  var error = new Error(__message__); // $FlowFixMe
+export function deserializeError(_ref2) {
+  var message = _ref2.message,
+      stack = _ref2.stack,
+      code = _ref2.code;
+  var error = new Error(message); // $FlowFixMe
 
-  error.code = __code__;
-  error.stack = __stack__ + "\n\n" + error.stack;
+  error.code = code;
+  error.stack = stack + "\n\n" + error.stack;
   return error;
 }

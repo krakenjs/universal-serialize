@@ -42,9 +42,3 @@ export function serialize(obj, serializers) {
 
   return result;
 }
-export function serializeType(type, val) {
-  return {
-    __type__: type,
-    __val__: val
-  };
-}

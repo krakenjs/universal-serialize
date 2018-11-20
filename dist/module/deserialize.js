@@ -22,22 +22,29 @@ export function deserialize(str, deserializers) {
       return val;
     }
 
-    var type = isSerializedType(val) ? val.__type__ : determineType(val);
+    var type;
+    var value;
+
+    if (isSerializedType(val)) {
+      type = val.__type__;
+      value = val.__val__;
+    } else {
+      type = determineType(val);
+      value = val;
+    }
 
     if (!type) {
-      return val;
+      return value;
     } // $FlowFixMe
 
 
-    if (deserializers[type]) {
-      // $FlowFixMe
-      return deserializers[type](val.__val__, key);
-    } else if (DESERIALIZER[type]) {
-      // $FlowFixMe
-      return DESERIALIZER[type](val, key);
-    } else {
-      return val;
+    var deserializer = deserializers[type] || DESERIALIZER[type];
+
+    if (!deserializer) {
+      return value;
     }
+
+    return deserializer(value, key);
   }
 
   return JSON.parse(str, replacer);

@@ -1,12 +1,9 @@
+import { serializeType } from '../common';
 import { TYPE } from '../constants';
 export function serializeRegex(val) {
-  return {
-    __type__: TYPE.REGEX,
-    __source__: val.source
-  };
+  return serializeType(TYPE.REGEX, val.source);
 }
-export function deserializeRegex(_ref) {
-  var __source__ = _ref.__source__;
+export function deserializeRegex(val) {
   // eslint-disable-next-line security/detect-non-literal-regexp
-  return new RegExp(__source__);
+  return new RegExp(val);
 }

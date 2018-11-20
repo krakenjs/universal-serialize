@@ -51,3 +51,9 @@ export function determineType(val) {
     return TYPE.BOOLEAN;
   }
 }
+export function serializeType(type, val) {
+  return {
+    __type__: type,
+    __val__: val
+  };
+}
