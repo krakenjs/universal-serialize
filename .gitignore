@@ -54,5 +54,5 @@ flow-typed
 .DS_Store
 package-lock.json
 
-./es
-./lib
+/es
+/lib
