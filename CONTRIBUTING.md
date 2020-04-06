@@ -25,8 +25,6 @@ $ npm install
 
 # Run scripts to verify installation
 $ npm test
-$ npm run-script lint
-$ npm run-script cover
 ```
 
 ## Making Changes

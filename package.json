@@ -2,17 +2,21 @@
   "name": "universal-serialize",
   "version": "1.0.7",
   "description": "Javascript module template.",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "sideEffects": false,
   "scripts": {
     "setup": "npm install && npm run flow-typed",
     "lint": "eslint src/ test/ *.js --ext .js,.jsx",
     "flow-typed": "rm -rf ./flow-typed && flow-typed install && flow-typed install mocha@4",
     "flow": "flow",
     "karma": "cross-env NODE_ENV=test babel-node --plugins=transform-es2015-modules-commonjs ./node_modules/.bin/karma start",
-    "babel": "babel src/ --out-dir dist/module",
+    "babel": "babel src --delete-dir-on-start",
+    "babel:cjs": "npm run babel -- --out-dir lib --env-name cjs",
+    "babel:es": "npm run babel -- --out-dir es --env-name esm",
     "webpack": "babel-node --plugins=transform-es2015-modules-commonjs ./node_modules/.bin/webpack --progress",
     "test": "npm run lint && npm run flow-typed && npm run flow && npm run karma",
-    "build": "npm run test && npm run babel && npm run webpack",
+    "build": "npm run test && npm run babel:cjs && npm run babel:es && npm run webpack",
     "release": "./publish.sh",
     "release:patch": "./publish.sh patch",
     "release:minor": "./publish.sh minor",
@@ -23,6 +27,8 @@
   },
   "files": [
     "dist/",
+    "es/",
+    "lib/",
     "src/"
   ],
   "browserslist": [
@@ -49,5 +55,8 @@
   "devDependencies": {
     "flow-bin": "^0.85",
     "grumbler-scripts": "^3"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.9.2"
   }
 }
