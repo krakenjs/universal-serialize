@@ -2,12 +2,20 @@
 module.exports = (api) => {
     const modules = api.env() === 'esm' ? false : 'auto';
     return {
-        extends: 'grumbler-scripts/config/.babelrc-browser',
-        presets: [
+        extends:    'grumbler-scripts/config/.babelrc-browser',
+        presets:    [
             [
                 '@babel/env',
                 {
                     modules
+                }
+            ]
+        ],
+        plugins: [
+            [
+                '@babel/plugin-transform-runtime',
+                {
+                    'useESModules': !modules
                 }
             ]
         ]
