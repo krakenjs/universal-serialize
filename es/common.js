@@ -1,6 +1,7 @@
+import _typeof from "@babel/runtime/helpers/esm/typeof";
 import { TYPE } from './constants';
 export function isSerializedType(item) {
-  return typeof item === 'object' && item !== null && typeof item.__type__ === 'string';
+  return _typeof(item) === 'object' && item !== null && typeof item.__type__ === 'string';
 }
 export function determineType(val) {
   if (typeof val === 'undefined') {
@@ -19,7 +20,7 @@ export function determineType(val) {
     return TYPE.FUNCTION;
   }
 
-  if (typeof val === 'object') {
+  if (_typeof(val) === 'object') {
     if (val instanceof Error) {
       return TYPE.ERROR;
     }

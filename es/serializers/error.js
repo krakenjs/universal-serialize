@@ -18,6 +18,6 @@ export function deserializeError(_ref2) {
   var error = new Error(message); // $FlowFixMe
 
   error.code = code;
-  error.stack = stack + "\n\n" + error.stack;
+  error.stack = "".concat(stack, "\n\n").concat(error.stack);
   return error;
 }
