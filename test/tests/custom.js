@@ -1,4 +1,5 @@
 /* @flow */
+/* eslint max-lines: off */
 
 import { TYPE, serialize, deserialize, serializeType, serializeObject, type CustomSerializedType } from '../../src';
 
@@ -490,6 +491,52 @@ describe('custom type cases', () => {
 
         if (result.foo !== deserializedValue) {
             throw new Error(`Expected ${ result.foo } to equal ${ deserializedValue }`);
+        }
+    });
+
+    it('should serialize an array with a function with a custom serializer and deserializer', () => {
+        const val = {
+            blerp: [
+                function foo(bar : string) : string {
+                    return bar;
+                }
+            ]
+        };
+        const serializedValue = `serialized::${ Math.random().toString() }`;
+        const deserializedValue = `deserialized::${ Math.random().toString() }`;
+    
+        const serializers = {
+            [ TYPE.FUNCTION ]: (value, key) : CustomSerializedType<typeof CUSTOM_SERIALIZATION, string> => {
+                if (value !== val.blerp[0]) {
+                    throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(val.blerp[0]) }`);
+                }
+
+                if (key !== '0') {
+                    throw new Error(`Expected key to be 0, got ${ key }`);
+                }
+    
+                return serializeType(CUSTOM_SERIALIZATION, serializedValue);
+            }
+        };
+    
+        const deserializers = {
+            [ CUSTOM_SERIALIZATION ]: (value, key) => {
+                if (value !== serializedValue) {
+                    throw new Error(`Expected ${ JSON.stringify(value) } to equal ${ JSON.stringify(serializedValue) }`);
+                }
+
+                if (key !== '0') {
+                    throw new Error(`Expected key to be 0, got ${ key }`);
+                }
+    
+                return deserializedValue;
+            }
+        };
+
+        const result = deserialize(serialize(val, serializers), deserializers);
+
+        if (result.blerp[0] !== deserializedValue) {
+            throw new Error(`Expected ${ result.blerp[0] } to equal ${ deserializedValue }`);
         }
     });
 });
