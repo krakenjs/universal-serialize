@@ -88,6 +88,8 @@ describe('basic type cases', () => {
         const val = new Error('meep');
         // $FlowFixMe
         val.code = 'ERROR_55';
+        // $FlowFixMe
+        val.data = { zerp: 'blerp' };
         const result = deserialize(serialize(val));
         if (!(result instanceof Error)) {
             throw new TypeError(`Expected result to be an instance of error`);
@@ -99,6 +101,9 @@ describe('basic type cases', () => {
         if (result.code !== val.code) {
             // $FlowFixMe
             throw new Error(`Expected message ${ result.code } to equal ${ val.code }`);
+        }
+        if (!result.data || result.data.zerp !== 'blerp') {
+            throw new Error(`Expected err.data to be serialized`);
         }
         if (result.stack.indexOf(val.stack)) {
             throw new Error(`Expected stack ${ result.stack } to contain ${ val.stack }`);
