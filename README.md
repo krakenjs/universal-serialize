@@ -17,7 +17,7 @@ const originalObject = {
 };
 
 // Serialize the complex object
-const jsonString = serialize();
+const jsonString = serialize(originalObject);
 
 // Deserialize the object
 const deserializedObject = deserialize(jsonString);
