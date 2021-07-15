@@ -34,10 +34,12 @@ export function determineType(val : mixed) : $Values<typeof TYPE> | void {
             return TYPE.PROMISE;
         }
 
+        // $FlowFixMe method-unbinding
         if (Object.prototype.toString.call(val) === '[object RegExp]') {
             return TYPE.REGEX;
         }
 
+        // $FlowFixMe method-unbinding
         if (Object.prototype.toString.call(val) === '[object Date]') {
             return TYPE.DATE;
         }

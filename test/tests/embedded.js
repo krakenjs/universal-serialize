@@ -80,7 +80,7 @@ describe('basic type cases', () => {
         const val = { foo: undefined };
         const result = deserialize(serialize(val));
         if (result.foo !== val.foo) {
-            throw new Error(`Expected ${ JSON.stringify(result.foo) } to equal ${ JSON.stringify(val.foo) }`);
+            throw new Error(`Expected ${ JSON.stringify(result.foo) } to equal ${ JSON.stringify(val.foo) || 'undefined' }`);
         }
     });
 
